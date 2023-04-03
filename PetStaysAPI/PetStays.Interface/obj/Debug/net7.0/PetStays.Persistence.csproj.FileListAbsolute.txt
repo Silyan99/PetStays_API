@@ -1,0 +1,15 @@
+F:\madeProj\New folder\G_Lab\API\PetStaysAPI\PetStays.Interface\bin\Debug\net7.0\PetStays.Persistence.deps.json
+F:\madeProj\New folder\G_Lab\API\PetStaysAPI\PetStays.Interface\bin\Debug\net7.0\PetStays.Persistence.dll
+F:\madeProj\New folder\G_Lab\API\PetStaysAPI\PetStays.Interface\bin\Debug\net7.0\PetStays.Persistence.pdb
+F:\madeProj\New folder\G_Lab\API\PetStaysAPI\PetStays.Interface\bin\Debug\net7.0\PetStays.Domain.dll
+F:\madeProj\New folder\G_Lab\API\PetStaysAPI\PetStays.Interface\bin\Debug\net7.0\PetStays.Domain.pdb
+F:\madeProj\New folder\G_Lab\API\PetStaysAPI\PetStays.Interface\obj\Debug\net7.0\PetStays.Persistence.csproj.AssemblyReference.cache
+F:\madeProj\New folder\G_Lab\API\PetStaysAPI\PetStays.Interface\obj\Debug\net7.0\PetStays.Persistence.GeneratedMSBuildEditorConfig.editorconfig
+F:\madeProj\New folder\G_Lab\API\PetStaysAPI\PetStays.Interface\obj\Debug\net7.0\PetStays.Persistence.AssemblyInfoInputs.cache
+F:\madeProj\New folder\G_Lab\API\PetStaysAPI\PetStays.Interface\obj\Debug\net7.0\PetStays.Persistence.AssemblyInfo.cs
+F:\madeProj\New folder\G_Lab\API\PetStaysAPI\PetStays.Interface\obj\Debug\net7.0\PetStays.Persistence.csproj.CoreCompileInputs.cache
+F:\madeProj\New folder\G_Lab\API\PetStaysAPI\PetStays.Interface\obj\Debug\net7.0\PetStays.Persistence.csproj.CopyComplete
+F:\madeProj\New folder\G_Lab\API\PetStaysAPI\PetStays.Interface\obj\Debug\net7.0\PetStays.Persistence.dll
+F:\madeProj\New folder\G_Lab\API\PetStaysAPI\PetStays.Interface\obj\Debug\net7.0\refint\PetStays.Persistence.dll
+F:\madeProj\New folder\G_Lab\API\PetStaysAPI\PetStays.Interface\obj\Debug\net7.0\PetStays.Persistence.pdb
+F:\madeProj\New folder\G_Lab\API\PetStaysAPI\PetStays.Interface\obj\Debug\net7.0\ref\PetStays.Persistence.dll

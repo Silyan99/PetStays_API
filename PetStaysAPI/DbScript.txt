@@ -1,0 +1,45 @@
+
+--------------------------------------- DataBase section ---------------------------------------
+
+USE [master];
+GO
+IF (EXISTS (SELECT name 
+FROM master.dbo.sysdatabases 
+WHERE ('[' + name + ']' = 'PetStays' 
+OR name = 'PetStays')))
+drop database [PetStays];
+
+CREATE DATABASE [PetStays];
+GO
+USE [PetStays];
+GO
+--------------------------------------- Schema section ---------------------------------------
+
+CREATE SCHEMA [pet] AUTHORIZATION [dbo];
+GO
+
+--------------------------------------- Table section ---------------------------------------
+
+CREATE TABLE [pet].[users]
+([id]                            [UNIQUEIDENTIFIER] ROWGUIDCOL NOT NULL, 
+ [user_name]                     [NVARCHAR](256) NOT NULL, 
+ [email]                         [NVARCHAR](256) NOT NULL,  
+ [password]                      [NVARCHAR](128) NOT NULL
+ CONSTRAINT [PK_users] PRIMARY KEY CLUSTERED([id] ASC) ON [PRIMARY]
+)
+ON [PRIMARY];
+
+GO
+
+INSERT INTO [pet].[users]
+    (id,
+    [user_name],
+    [email],
+    [password])
+VALUES
+    (
+	'01faa769-7e83-494b-9ab2-182b9638d405',
+    'Admin User',
+    'admin@test.com',
+    '098f6bcd4621d373cade4e832627b4f6')
+GO

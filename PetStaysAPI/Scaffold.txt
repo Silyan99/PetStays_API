@@ -1,0 +1,1 @@
+Scaffold-DbContext "Integrated Security=True;Initial Catalog=PetStays;Data Source=<ServerName>; TrustServerCertificate=True" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Entities -force
