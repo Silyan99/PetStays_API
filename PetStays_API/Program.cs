@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using PetStays_API.DBModels;
+using PetStays_API.Interfaces;
+using PetStays_API.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +12,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<IPetStaysRepository, PetStaysRepository>();
 
 builder.Services.AddDbContext<PetStaysContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionStrings")));

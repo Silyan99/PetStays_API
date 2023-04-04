@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PetStays_API.DBModels;
+using PetStays_API.Interfaces;
 using PetStays_API.Models;
+using PetStays_API.Repositories;
 
 namespace PetStays_API.Controllers
 {
@@ -8,27 +10,17 @@ namespace PetStays_API.Controllers
     [Route("[controller]")]
     public class PetStaysController : ControllerBase
     {
-        public PetStaysController() { }
+        private readonly IPetStaysRepository _petStaysRepository;
+        public PetStaysController(IPetStaysRepository petStaysRepository) {
+            _petStaysRepository = petStaysRepository;
+        }
 
         [HttpPost]
         [Route("Signup")]
-        public IActionResult Signup(Signup details)
+        public async Task<IActionResult> Signup(Signup details)
         {
-            using (PetStaysContext con = new PetStaysContext())
-            {
-                var user = new User()
-                {
-                    Email = details.Email,
-                    Password = details.Password,
-                    FullName= details.FullName,
-                    Mobile= details.Mobile                
-                };
-                con.Users.Add(user);
-
-                con.SaveChanges();
-            }
-
-            return Ok(new Result { Status = true, Message = "User Added" });
+            var result = await _petStaysRepository.SignUp(details);
+            return Ok(result);
         }
 
         [HttpPost]
