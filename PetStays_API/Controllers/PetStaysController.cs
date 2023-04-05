@@ -1,18 +1,25 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using PetStays_API.DBModels;
 using PetStays_API.Interfaces;
 using PetStays_API.Models;
 using PetStays_API.Repositories;
+using PetStays_API.Utility;
 
 namespace PetStays_API.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("[controller]")]
     public class PetStaysController : ControllerBase
     {
         private readonly IPetStaysRepository _petStaysRepository;
-        public PetStaysController(IPetStaysRepository petStaysRepository) {
+        private readonly JwtConfig _jwtToken;
+        public PetStaysController(IPetStaysRepository petStaysRepository, IOptions<JwtConfig> tokenConfig) {
             _petStaysRepository = petStaysRepository;
+            _jwtToken = tokenConfig.Value;
         }
 
         [HttpPost]
@@ -25,9 +32,11 @@ namespace PetStays_API.Controllers
 
         [HttpPost]
         [Route("Login")]
+        [AllowAnonymous]
         public IActionResult Login(Login details)
         {
-            return Ok();
+            var token = UserManager.GenerateJWTToken(details.Email, _jwtToken);
+            return Ok(token);
         }
     }
 }
