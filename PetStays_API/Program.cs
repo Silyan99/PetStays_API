@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PetStays_API.DBModels;
@@ -10,6 +9,12 @@ using PetStays_API.Repositories;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+    options.JsonSerializerOptions.PropertyNamingPolicy = null;
+});
 
 // Add services to the container.
 
@@ -75,6 +80,11 @@ builder.Services.AddDbContext<PetStaysContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionStrings")));
 
 var app = builder.Build();
+app.UseCors(options =>
+               options.AllowAnyOrigin()
+               .AllowAnyHeader()
+               .AllowAnyMethod()
+             );
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

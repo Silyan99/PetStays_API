@@ -1,12 +1,24 @@
-﻿using PetStays_API.DBModels;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using PetStays_API.DBModels;
+using PetStays_API.Helpers;
 using PetStays_API.Interfaces;
 using PetStays_API.Models;
+using PetStays_API.Utility;
+using System.Buffers.Text;
+using System.Net;
+using System.Web.Http;
 
 namespace PetStays_API.Repositories
 {
     public class PetStaysRepository : IPetStaysRepository
     {
-        public PetStaysRepository() { }
+        private readonly JwtConfig _jwtToken;
+        public PetStaysRepository(IOptions<JwtConfig> tokenConfig) 
+        {
+            _jwtToken = tokenConfig.Value;
+        }
 
         public async Task<Result> SignUp(Signup details)
         {
@@ -15,10 +27,11 @@ namespace PetStays_API.Repositories
             {
                 using (PetStaysContext con = new PetStaysContext())
                 {
+                    Base64Helper base64 = new Base64Helper();
                     var user = new User()
                     {
                         Email = details.Email,
-                        Password = details.Password,
+                        Password = base64.Base64Encode(details.Password),
                         FullName = details.FullName,
                         Mobile = details.Mobile
                     };
@@ -39,10 +52,29 @@ namespace PetStays_API.Repositories
 
         }
 
-        public async Task<Result> Login(Login details)
+        public async Task<AuthVM> Login(Login details)
         {
             Result result = new Result();
-            return result;
+            try
+            {
+                using (PetStaysContext con = new PetStaysContext())
+                {
+                    Base64Helper base64 = new Base64Helper();
+                    User user = await con.Users.Where(x => x.Email == details.Email).FirstOrDefaultAsync();
+                    if (user == null) throw new Exception("User not exist");
+                    if(user.Password == details.Password)
+                    {
+                        var token = UserManager.GenerateJWTToken(details.Email, _jwtToken);
+                        return new AuthVM { Token = token };
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                result.Status = false;
+                result.Message = ex.Message;
+            }
+            throw new HttpResponseException(HttpStatusCode.Unauthorized);
         }
     }
 }
