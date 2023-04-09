@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PetStays_API.DBModels;
+using PetStays_API.Helpers;
 using PetStays_API.Interfaces;
 using PetStays_API.Models;
 using PetStays_API.Repositories;
@@ -80,6 +82,7 @@ builder.Services.AddDbContext<PetStaysContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionStrings")));
 
 var app = builder.Build();
+app.UseMiddleware(typeof(ErrorHandling));
 app.UseCors(options =>
                options.AllowAnyOrigin()
                .AllowAnyHeader()

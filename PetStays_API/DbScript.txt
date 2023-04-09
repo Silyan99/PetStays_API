@@ -22,7 +22,30 @@ email varchar(100),
 password varchar(100),
 full_name varchar(70),
 mobile varchar(30),
-created_date datetime DEFAULT(getdate())
+created_date datetime DEFAULT(GETUTCDATE())
+);
+
+GO
+
+INSERT INTO [dbo].[users]
+           ([email]
+           ,[password]
+           ,[full_name]
+           ,[mobile])
+     VALUES
+           ('admin@test.com'
+           ,'dGVzdA=='
+           ,'Admin User'
+           ,'5439870567')
+GO
+
+Create table contacts(
+id int primary key identity(1,1),
+full_name varchar(70),
+email varchar(100),
+mobile varchar(30),
+message varchar(500),
+created_date datetime DEFAULT(GETUTCDATE())
 );
 
 GO

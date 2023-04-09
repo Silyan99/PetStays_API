@@ -6,5 +6,6 @@ namespace PetStays_API.Interfaces
     {
         Task<Result> SignUp(Signup details);
         Task<AuthVM> Login(Login details);
+        Task<Result> Contact(ContactInfo details);
     }
 }

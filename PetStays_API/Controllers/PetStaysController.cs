@@ -26,6 +26,7 @@ namespace PetStays_API.Controllers
         [AllowAnonymous]
         [HttpPost]
         [Route("Signup")]
+        [ProducesResponseType(typeof(Result), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> Signup(Signup details)
         {
             var result = await _petStaysRepository.SignUp(details);
@@ -39,6 +40,16 @@ namespace PetStays_API.Controllers
         public async Task<IActionResult> Login(Login details)
         {
             var result = await _petStaysRepository.Login(details);
+            return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("Contact")]
+        [ProducesResponseType(typeof(Result), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> Contact(ContactInfo details)
+        {
+            var result = await _petStaysRepository.Contact(details);
             return Ok(result);
         }
     }
