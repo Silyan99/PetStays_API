@@ -4,5 +4,6 @@
     {
         public const string EmailPasswordNotCorrect = "Email or Password is not correct";
         public const string UserNotExist = "User not exist";
+        public const string EmailAlreadyExist = "Email already exist";
     }
 }

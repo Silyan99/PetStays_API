@@ -10,13 +10,14 @@ namespace PetStays_API.Utility
     {
         const string _username = "Username";
 
-        public static string GenerateJWTToken(string username, JwtConfig jwtConfig)
+        public static string GenerateJWTToken(string username, Config jwtConfig, string role)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.SecretKey));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var claims = new[]
             {
                 new Claim(_username, username),
+                role == "Admin" ? new Claim("AdminKey", "7NKBuMfwTM") : new Claim("CustomerKey", "wfZmflTyvR"),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             };
             var token = new JwtSecurityToken(

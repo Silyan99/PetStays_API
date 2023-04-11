@@ -18,10 +18,11 @@ GO
 
 Create table users(
 id int primary key identity(1,1),
-email varchar(100),
+email varchar(100) UNIQUE,
 password varchar(100),
 full_name varchar(70),
 mobile varchar(30),
+role varchar(10),
 created_date datetime DEFAULT(GETUTCDATE())
 );
 
@@ -31,20 +32,67 @@ INSERT INTO [dbo].[users]
            ([email]
            ,[password]
            ,[full_name]
-           ,[mobile])
+           ,[mobile]
+           ,[role])
      VALUES
            ('admin@test.com'
            ,'dGVzdA=='
            ,'Admin User'
-           ,'5439870567')
+           ,'5439870567'
+           ,'Admin')
 GO
 
 Create table contacts(
 id int primary key identity(1,1),
 full_name varchar(70),
-email varchar(100),
+email varchar(100) UNIQUE,
 mobile varchar(30),
 message varchar(500),
+created_date datetime DEFAULT(GETUTCDATE())
+);
+
+GO
+
+Create table pets(
+id int primary key identity(1,1),
+category varchar(50),
+uid varchar(100),
+name varchar(100),
+age int,
+gender varchar(50),
+vaccinated bit,
+color varchar(50),
+breed varchar(50),
+details varchar(500),
+owner_id int FOREIGN KEY REFERENCES users(id),
+photo varchar(500),
+created_date datetime DEFAULT(GETUTCDATE())
+);
+
+GO
+
+Create table availability(
+id int primary key identity(1,1),
+date date,
+time_start time,
+time_end time,
+full_day bit,
+admin_id int FOREIGN KEY REFERENCES users(id),
+created_date datetime DEFAULT(GETUTCDATE())
+);
+
+GO
+
+Create table requests(
+id int primary key identity(1,1),
+made_by int FOREIGN KEY REFERENCES users(id),
+date date,
+time_from time,
+time_to time,
+pet_id int FOREIGN KEY REFERENCES pets(id),
+is_payment_done bit,
+status bit,
+remarks varchar(500),
 created_date datetime DEFAULT(GETUTCDATE())
 );
 

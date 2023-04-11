@@ -25,11 +25,21 @@ namespace PetStays_API.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        [Route("Signup")]
+        [Route("[action]")]
         [ProducesResponseType(typeof(Result), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> Signup(Signup details)
+        public async Task<IActionResult> SignUpUser(Signup details)
         {
-            var result = await _petStaysRepository.SignUp(details);
+            var result = await _petStaysRepository.SignUpUser(details);
+            return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("[action]")]
+        [ProducesResponseType(typeof(Result), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> SignUpAdmin(Signup details)
+        {
+            var result = await _petStaysRepository.SignUpAdmin(details);
             return Ok(result);
         }
 
@@ -37,7 +47,7 @@ namespace PetStays_API.Controllers
         [HttpPost]
         [Route("Login")]
         [ProducesResponseType(typeof(AuthVM), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> Login(Login details)
+        public async Task<IActionResult> LoginUser(Login details)
         {
             var result = await _petStaysRepository.Login(details);
             return Ok(result);

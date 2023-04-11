@@ -4,7 +4,8 @@ namespace PetStays_API.Interfaces
 {
     public interface IPetStaysRepository
     {
-        Task<Result> SignUp(Signup details);
+        Task<Result> SignUpUser(Signup details);
+        Task<Result> SignUpAdmin(Signup details);
         Task<AuthVM> Login(Login details);
         Task<Result> Contact(ContactInfo details);
     }

@@ -1,0 +1,2 @@
+﻿alter table [dbo].[users] add constraint [unique_email] Unique([email]);
+alter table [dbo].[contacts] add constraint [[unique_contact_email]] Unique([email]);

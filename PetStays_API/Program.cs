@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PetStays_API.DBModels;
@@ -56,7 +57,7 @@ builder.Services.AddSwaggerGen(c =>
                 });
 });
 builder.Services.AddScoped<IPetStaysRepository, PetStaysRepository>();
-builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection("Jwt"));
+builder.Services.Configure<Config>(builder.Configuration.GetSection("Config"));
 
 builder.Services.AddAuthentication(x =>
 {
@@ -70,16 +71,16 @@ builder.Services.AddAuthentication(x =>
         ValidateAudience = false,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"]))
+        ValidIssuer = builder.Configuration["Config:Issuer"],
+        ValidAudience = builder.Configuration["Config:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Config:SecretKey"]))
     };
 });
 
 builder.Services.AddAuthorization();
 
 builder.Services.AddDbContext<PetStaysContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionStrings")));
+options.UseSqlServer(builder.Configuration["Config:ConnectionStrings"]));
 
 var app = builder.Build();
 app.UseMiddleware(typeof(ErrorHandling));
