@@ -1,2 +1,9 @@
 ﻿alter table [dbo].[users] add constraint [unique_email] Unique([email]);
 alter table [dbo].[contacts] add constraint [[unique_contact_email]] Unique([email]);
+
+--------------------------------------- 12-04-2023 ---------------------------------------
+ALTER TABLE dbo.requests
+  ADD CONSTRAINT fk_pet_id 
+  FOREIGN KEY (pet_id) 
+  REFERENCES pets(id) 
+  ON DELETE CASCADE;

@@ -169,7 +169,8 @@ public partial class PetStaysContext : DbContext
 
             entity.HasOne(d => d.Pet).WithMany(p => p.Requests)
                 .HasForeignKey(d => d.PetId)
-                .HasConstraintName("FK__requests__pet_id__3B75D760");
+                .OnDelete(DeleteBehavior.Cascade)
+                .HasConstraintName("fk_pet_id");
         });
 
         modelBuilder.Entity<User>(entity =>
