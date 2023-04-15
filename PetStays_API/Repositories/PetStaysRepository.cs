@@ -7,7 +7,6 @@ using PetStays_API.Interfaces;
 using PetStays_API.Models;
 using PetStays_API.Utility;
 using System.Security.Claims;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PetStays_API.Repositories
 {
@@ -15,10 +14,13 @@ namespace PetStays_API.Repositories
     {
         private readonly Config _jwtToken;
         public readonly PetStaysContext _ctx;
-        public PetStaysRepository(IOptions<Config> config)
+        private readonly IMailService _mailService;
+
+        public PetStaysRepository(IOptions<Config> config, IMailService mailService)
         {
             _jwtToken = config.Value;
             _ctx = new PetStaysContext(config.Value.ConnectionStrings);
+            _mailService = mailService;
         }
 
         public async Task<Result> SignUpUser(Signup details)
@@ -36,34 +38,41 @@ namespace PetStays_API.Repositories
                 Role = "User"
             };
             _ctx.Users.Add(user);
-
             _ctx.SaveChanges();
+            MailRequest request = new MailRequest()
+            {
+                MailTo = "petStays@yopmail.com", // Admin Mail
+                Subject = "New Request",
+                Body = $"Hi! You have recieved new request from {details.Email}."
+            };
+            await _mailService.SendEmailAsync(request);
             result.Status = true;
             result.Message = "User added successfully";
             return result;
         }
 
-        public async Task<Result> SignUpAdmin(Signup details)
-        {
-            Result result = new Result();
-            Base64Helper base64 = new Base64Helper();
-            User dbUser = await _ctx.Users.Where(x => x.Email == details.Email).FirstOrDefaultAsync();
-            if (dbUser != null) throw new ConflictException(ErrorMessages.EmailAlreadyExist);
-            var user = new User()
-            {
-                Email = details.Email,
-                Password = base64.Base64Encode(details.Password),
-                FullName = details.FullName,
-                Mobile = details.Mobile,
-                Role = "Admin"
-            };
-            _ctx.Users.Add(user);
+        //public async Task<Result> SignUpAdmin(Signup details)
+        //{
+        //    Result result = new Result();
+        //    Base64Helper base64 = new Base64Helper();
+        //    User dbUser = await _ctx.Users.Where(x => x.Email == details.Email).FirstOrDefaultAsync();
+        //    if (dbUser != null) throw new ConflictException(ErrorMessages.EmailAlreadyExist);
+        //    var user = new User()
+        //    {
+        //        Email = details.Email,
+        //        Password = base64.Base64Encode(details.Password),
+        //        FullName = details.FullName,
+        //        Mobile = details.Mobile,
+        //        Role = "Admin"
+        //    };
 
-            _ctx.SaveChanges();
-            result.Status = true;
-            result.Message = "Admin added successfully";
-            return result;
-        }
+        //    _ctx.Users.Add(user);
+        //    _ctx.SaveChanges();
+            
+        //    result.Status = true;
+        //    result.Message = "Admin added successfully";
+        //    return result;
+        //}
 
         public async Task<AuthVM> Login(Login details)
         {
@@ -269,6 +278,14 @@ namespace PetStays_API.Repositories
             res.IsPaymentDone = data.IsPaymentDone;
             _ctx.Requests.Update(res);
             _ctx.SaveChanges();
+            var text = data.Status ? "Accepted" : "Rejected";
+            MailRequest request = new MailRequest()
+            {
+                MailTo = "petStays@yopmail.com", // User Mail
+                Subject = "Request Status",
+                Body = $"Hi! Your request has been {text} with remarks {data.Remarks}."
+            };
+            await _mailService.SendEmailAsync(request);
             result.Status = true;
             result.Message = "Detail updated successfully";
             return result;

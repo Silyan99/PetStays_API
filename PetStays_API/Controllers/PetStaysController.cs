@@ -1,12 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using PetStays_API.DBModels;
 using PetStays_API.Interfaces;
 using PetStays_API.Models;
-using PetStays_API.Repositories;
-using PetStays_API.Utility;
 using System.Net;
 using System.Security.Claims;
 
@@ -19,7 +14,7 @@ namespace PetStays_API.Controllers
     {
         private readonly IPetStaysRepository _petStaysRepository;
 
-        public PetStaysController(IPetStaysRepository petStaysRepository)
+        public PetStaysController(IPetStaysRepository petStaysRepository, IMailService mailService)
         {
             _petStaysRepository = petStaysRepository;
         }
