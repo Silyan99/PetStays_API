@@ -7,7 +7,7 @@ namespace PetStays_API.Models
         [JsonIgnore]
         public int Id { get; set; }
         public bool IsPaymentDone { get; set; }
-        public bool Status { get; set; }
+        public string Status { get; set; }
         public string Remarks { get; set; }
     }
 }

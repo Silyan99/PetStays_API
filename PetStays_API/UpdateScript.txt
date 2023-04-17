@@ -7,3 +7,7 @@ ALTER TABLE dbo.requests
   FOREIGN KEY (pet_id) 
   REFERENCES pets(id) 
   ON DELETE CASCADE;
+
+--------------------------------------- 17-04-2023 ---------------------------------------
+alter table [dbo].[users] add address varchar(200);
+alter table [dbo].[requests] alter column status varchar(20);

@@ -19,7 +19,7 @@ public partial class Request
 
     public bool? IsPaymentDone { get; set; }
 
-    public bool? Status { get; set; }
+    public string? Status { get; set; }
 
     public string? Remarks { get; set; }
 

@@ -11,5 +11,7 @@
 
         public string? Mobile { get; set; }
 
+        public string Address { get; set; }
+
     }
 }

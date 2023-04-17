@@ -35,7 +35,8 @@ namespace PetStays_API.Repositories
                 Password = base64.Base64Encode(details.Password),
                 FullName = details.FullName,
                 Mobile = details.Mobile,
-                Role = "User"
+                Role = "User",
+                Address = details.Address
             };
             _ctx.Users.Add(user);
             _ctx.SaveChanges();
@@ -211,7 +212,8 @@ namespace PetStays_API.Repositories
         {
             var item = (
                 from p in _ctx.Pets
-                join r in _ctx.Requests on p.Id equals r.PetId
+                join r in _ctx.Requests on p.Id equals r.PetId 
+                join u in _ctx.Users on p.OwnerId equals u.Id
                 select new RequestsVM
                 {
                     Category = p.Category,
@@ -230,8 +232,11 @@ namespace PetStays_API.Repositories
                     TimeTo = (TimeSpan)r.TimeTo,
                     PetId = Convert.ToInt32(r.PetId),
                     IsPaymentDone = Convert.ToBoolean(r.IsPaymentDone),
-                    Status = Convert.ToBoolean(r.Status),
-                    Remarks = Convert.ToString(r.Remarks)
+                    Status = Convert.ToString(r.Status),
+                    Remarks = Convert.ToString(r.Remarks),
+                    OwnerName = u.FullName,
+                    Address = u.Address
+
                 });
 
             return item.ToList();
@@ -261,7 +266,7 @@ namespace PetStays_API.Repositories
                     TimeTo = (TimeSpan)r.TimeTo,
                     PetId = Convert.ToInt32(r.PetId),
                     IsPaymentDone = Convert.ToBoolean(r.IsPaymentDone),
-                    Status = Convert.ToBoolean(r.Status),
+                    Status = Convert.ToString(r.Status),
                     Remarks = Convert.ToString(r.Remarks)
                 }).FirstOrDefault();
 
@@ -278,7 +283,7 @@ namespace PetStays_API.Repositories
             res.IsPaymentDone = data.IsPaymentDone;
             _ctx.Requests.Update(res);
             _ctx.SaveChanges();
-            var text = data.Status ? "Accepted" : "Rejected";
+            var text = data.Status;
             MailRequest request = new MailRequest()
             {
                 MailTo = "petStays@yopmail.com", // User Mail
@@ -316,7 +321,7 @@ namespace PetStays_API.Repositories
                     TimeTo = (TimeSpan)r.TimeTo,
                     PetId = Convert.ToInt32(r.PetId),
                     IsPaymentDone = Convert.ToBoolean(r.IsPaymentDone),
-                    Status = Convert.ToBoolean(r.Status),
+                    Status = Convert.ToString(r.Status),
                     Remarks = Convert.ToString(r.Remarks)
                 });
 
@@ -348,7 +353,7 @@ namespace PetStays_API.Repositories
                     TimeTo = (TimeSpan)r.TimeTo,
                     PetId = Convert.ToInt32(r.PetId),
                     IsPaymentDone = Convert.ToBoolean(r.IsPaymentDone),
-                    Status = Convert.ToBoolean(r.Status),
+                    Status = Convert.ToString(r.Status),
                     Remarks = Convert.ToString(r.Remarks)
                 }).FirstOrDefault();
 
@@ -365,6 +370,23 @@ namespace PetStays_API.Repositories
             result.Status = true;
             result.Message = "Request deleted successfully";
             return result;
+        }
+
+        public async Task<List<AvailabilityDetail>> GetAvailability(int id)
+        {
+            var item = (
+                from a in _ctx.Availabilities
+                where (a.AdminId == id)
+                select new AvailabilityDetail
+                {
+                    Date = Convert.ToDateTime(a.Date),
+                    TimeStart = (TimeSpan)a.TimeStart,
+                    TimeEnd = (TimeSpan)a.TimeEnd,
+                    FullDay = Convert.ToBoolean(a.FullDay),
+                    AdminId = Convert.ToInt32(a.AdminId)
+                });
+
+            return item.ToList();
         }
     }
 }

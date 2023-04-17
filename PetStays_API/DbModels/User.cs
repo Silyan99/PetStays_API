@@ -19,6 +19,8 @@ public partial class User
 
     public DateTime? CreatedDate { get; set; }
 
+    public string? Address { get; set; }
+
     public virtual ICollection<Availability> Availabilities { get; } = new List<Availability>();
 
     public virtual ICollection<Pet> Pets { get; } = new List<Pet>();

@@ -159,7 +159,10 @@ public partial class PetStaysContext : DbContext
                 .HasMaxLength(500)
                 .IsUnicode(false)
                 .HasColumnName("remarks");
-            entity.Property(e => e.Status).HasColumnName("status");
+            entity.Property(e => e.Status)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasColumnName("status");
             entity.Property(e => e.TimeFrom).HasColumnName("time_from");
             entity.Property(e => e.TimeTo).HasColumnName("time_to");
 
@@ -182,6 +185,10 @@ public partial class PetStaysContext : DbContext
             entity.HasIndex(e => e.Email, "unique_email").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Address)
+                .HasMaxLength(200)
+                .IsUnicode(false)
+                .HasColumnName("address");
             entity.Property(e => e.CreatedDate)
                 .HasDefaultValueSql("(getutcdate())")
                 .HasColumnType("datetime")
