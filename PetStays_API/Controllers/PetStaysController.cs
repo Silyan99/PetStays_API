@@ -146,7 +146,7 @@ namespace PetStays_API.Controllers
 
         [HttpGet]
         [Route("[action]/{Id}")]
-        [ProducesResponseType(typeof(RequestsVM), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(IList<AvailabilityDetail>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetAvailability(int Id)
         {
             var result = await _petStaysRepository.GetAvailability(Id);
