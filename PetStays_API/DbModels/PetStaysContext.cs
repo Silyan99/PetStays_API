@@ -149,9 +149,12 @@ public partial class PetStaysContext : DbContext
                 .HasDefaultValueSql("(getutcdate())")
                 .HasColumnType("datetime")
                 .HasColumnName("created_date");
-            entity.Property(e => e.Date)
+            entity.Property(e => e.DateFrom)
                 .HasColumnType("date")
-                .HasColumnName("date");
+                .HasColumnName("date_from");
+            entity.Property(e => e.DateTo)
+                .HasColumnType("date")
+                .HasColumnName("date_to");
             entity.Property(e => e.IsPaymentDone).HasColumnName("is_payment_done");
             entity.Property(e => e.MadeBy).HasColumnName("made_by");
             entity.Property(e => e.PetId).HasColumnName("pet_id");

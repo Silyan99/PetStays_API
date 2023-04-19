@@ -4,7 +4,9 @@
     {
         public int MadeBy { get; set; }
 
-        public DateTime Date { get; set; }
+        public DateTime DateFrom { get; set; }
+
+        public DateTime DateTo { get; set; }
 
         public TimeSpan TimeFrom { get; set; }
 

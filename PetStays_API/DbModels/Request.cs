@@ -9,7 +9,7 @@ public partial class Request
 
     public int? MadeBy { get; set; }
 
-    public DateTime? Date { get; set; }
+    public DateTime? DateFrom { get; set; }
 
     public TimeSpan? TimeFrom { get; set; }
 
@@ -24,6 +24,8 @@ public partial class Request
     public string? Remarks { get; set; }
 
     public DateTime? CreatedDate { get; set; }
+
+    public DateTime? DateTo { get; set; }
 
     public virtual User? MadeByNavigation { get; set; }
 

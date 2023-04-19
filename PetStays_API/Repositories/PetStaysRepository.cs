@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using PetStays_API.DBModels;
 using PetStays_API.Exceptions;
 using PetStays_API.Helpers;
@@ -154,9 +155,10 @@ namespace PetStays_API.Repositories
             var req = new Request()
             {
                 MadeBy = id,
-                Date = data.Date,
-                TimeFrom = data.TimeFrom,
-                TimeTo = data.TimeTo,
+                DateFrom = Convert.ToDateTime(data.DateFrom),
+                DateTo = Convert.ToDateTime(data.DateTo),
+                TimeFrom = TimeSpan.Parse(data.TimeFrom),
+                TimeTo = TimeSpan.Parse(data.TimeTo),
                 PetId = pet.Id
             };
             _ctx.Requests.Add(req);
@@ -192,11 +194,15 @@ namespace PetStays_API.Repositories
         public async Task<Result> AddAvailability(AvailabilityDetail data)
         {
             Result result = new Result();
+            if(!data.TimeStart.IsNullOrEmpty() && !data.TimeEnd.IsNullOrEmpty())
+            {
+                data.FullDay = false;
+            }
             var availability = new Availability()
             {
-                Date = data.Date,
-                TimeStart = data.TimeStart,
-                TimeEnd = data.TimeEnd,
+                Date = Convert.ToDateTime(data.Date),
+                TimeStart = TimeSpan.Parse(data.TimeStart),
+                TimeEnd = TimeSpan.Parse(data.TimeEnd),
                 FullDay = data.FullDay,
                 AdminId = data.AdminId
             };
@@ -227,9 +233,10 @@ namespace PetStays_API.Repositories
                     Details = p.Details,
                     OwnerId = Convert.ToInt32(p.OwnerId),
                     Photo = p.Photo,
-                    Date = Convert.ToDateTime(r.Date),
-                    TimeFrom = (TimeSpan)r.TimeFrom,
-                    TimeTo = (TimeSpan)r.TimeTo,
+                    DateFrom = r.DateFrom.ToString(),
+                    DateTo = r.DateTo.ToString(),
+                    TimeFrom = r.TimeFrom.ToString(),
+                    TimeTo = r.TimeTo.ToString(),
                     PetId = Convert.ToInt32(r.PetId),
                     IsPaymentDone = Convert.ToBoolean(r.IsPaymentDone),
                     Status = Convert.ToString(r.Status),
@@ -261,9 +268,10 @@ namespace PetStays_API.Repositories
                     Details = p.Details,
                     OwnerId = Convert.ToInt32(p.OwnerId),
                     Photo = p.Photo,
-                    Date = Convert.ToDateTime(r.Date),
-                    TimeFrom = (TimeSpan)r.TimeFrom,
-                    TimeTo = (TimeSpan)r.TimeTo,
+                    DateFrom = r.DateFrom.ToString(),
+                    DateTo = r.DateTo.ToString(),
+                    TimeFrom = r.TimeFrom.ToString(),
+                    TimeTo = r.TimeTo.ToString(),
                     PetId = Convert.ToInt32(r.PetId),
                     IsPaymentDone = Convert.ToBoolean(r.IsPaymentDone),
                     Status = Convert.ToString(r.Status),
@@ -316,9 +324,10 @@ namespace PetStays_API.Repositories
                     Details = p.Details,
                     OwnerId = Convert.ToInt32(p.OwnerId),
                     Photo = p.Photo,
-                    Date = Convert.ToDateTime(r.Date),
-                    TimeFrom = (TimeSpan)r.TimeFrom,
-                    TimeTo = (TimeSpan)r.TimeTo,
+                    DateFrom = r.DateFrom.ToString(),
+                    DateTo = r.DateTo.ToString(),
+                    TimeFrom = r.TimeFrom.ToString(),
+                    TimeTo = r.TimeTo.ToString(),
                     PetId = Convert.ToInt32(r.PetId),
                     IsPaymentDone = Convert.ToBoolean(r.IsPaymentDone),
                     Status = Convert.ToString(r.Status),
@@ -348,9 +357,10 @@ namespace PetStays_API.Repositories
                     Details = p.Details,
                     OwnerId = Convert.ToInt32(p.OwnerId),
                     Photo = p.Photo,
-                    Date = Convert.ToDateTime(r.Date),
-                    TimeFrom = (TimeSpan)r.TimeFrom,
-                    TimeTo = (TimeSpan)r.TimeTo,
+                    DateFrom = r.DateFrom.ToString(),
+                    DateTo = r.DateTo.ToString(),
+                    TimeFrom = r.TimeFrom.ToString(),
+                    TimeTo = r.TimeTo.ToString(),
                     PetId = Convert.ToInt32(r.PetId),
                     IsPaymentDone = Convert.ToBoolean(r.IsPaymentDone),
                     Status = Convert.ToString(r.Status),
@@ -379,14 +389,27 @@ namespace PetStays_API.Repositories
                 where (a.AdminId == id)
                 select new AvailabilityDetail
                 {
-                    Date = Convert.ToDateTime(a.Date),
-                    TimeStart = (TimeSpan)a.TimeStart,
-                    TimeEnd = (TimeSpan)a.TimeEnd,
+                    Date =a.Date.ToString(),
+                    TimeStart = a.TimeStart.ToString(),
+                    TimeEnd = a.TimeEnd.ToString(),
                     FullDay = Convert.ToBoolean(a.FullDay),
                     AdminId = Convert.ToInt32(a.AdminId)
                 });
 
             return item.ToList();
+        }
+
+        public async Task<UserDetail> GetUserById(int id)
+        {
+            User user = await _ctx.Users.Where(x => x.Id ==id).FirstOrDefaultAsync();
+            UserDetail userDetail = new()
+            {
+                Email = user.Email,
+                FullName = user.FullName,
+                Mobile = user.Mobile,
+                Address = user.Address
+            };
+            return userDetail;
         }
     }
 }

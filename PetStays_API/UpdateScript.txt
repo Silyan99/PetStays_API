@@ -11,3 +11,8 @@ ALTER TABLE dbo.requests
 --------------------------------------- 17-04-2023 ---------------------------------------
 alter table [dbo].[users] add address varchar(200);
 alter table [dbo].[requests] alter column status varchar(20);
+
+--------------------------------------- 19-04-2023 ---------------------------------------
+alter table [dbo].[requests] add date_to date;
+use PetStays;
+exec sp_rename 'dbo.requests.date', 'date_from' , 'COLUMN';

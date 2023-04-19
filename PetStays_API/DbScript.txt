@@ -87,7 +87,8 @@ GO
 Create table requests(
 id int primary key identity(1,1),
 made_by int FOREIGN KEY REFERENCES users(id),
-date date,
+date_from date,
+date_to date,
 time_from time,
 time_to time,
 pet_id int FOREIGN KEY REFERENCES pets(id) ON DELETE CASCADE,
