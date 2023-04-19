@@ -6,6 +6,7 @@ using PetStays_API.Helpers;
 using PetStays_API.Interfaces;
 using PetStays_API.Models;
 using PetStays_API.Utility;
+using System.Linq;
 using System.Security.Claims;
 
 namespace PetStays_API.Repositories
@@ -40,6 +41,8 @@ namespace PetStays_API.Repositories
             };
             _ctx.Users.Add(user);
             _ctx.SaveChanges();
+#if !DEBUG
+
             MailRequest request = new MailRequest()
             {
                 MailTo = "petStays@yopmail.com", // Admin Mail
@@ -47,6 +50,7 @@ namespace PetStays_API.Repositories
                 Body = $"Hi! You have recieved new request from {details.Email}."
             };
             await _mailService.SendEmailAsync(request);
+#endif
             result.Status = true;
             result.Message = "User added successfully";
             return result;
@@ -157,7 +161,8 @@ namespace PetStays_API.Repositories
                 Date = data.Date,
                 TimeFrom = data.TimeFrom,
                 TimeTo = data.TimeTo,
-                PetId = pet.Id
+                PetId = pet.Id,
+                Status = "pending"
             };
             _ctx.Requests.Add(req);
 
@@ -239,7 +244,7 @@ namespace PetStays_API.Repositories
 
                 });
 
-            return item.ToList();
+            return await item.ToListAsync();
         }
 
         public async Task<RequestsVM> GetRequest(int id)
@@ -247,6 +252,7 @@ namespace PetStays_API.Repositories
             var item = (
                 from p in _ctx.Pets
                 join r in _ctx.Requests on p.Id equals r.PetId
+                join u in _ctx.Users on p.OwnerId equals u.Id
                 where (p.Id == id)
                 select new RequestsVM
                 {
@@ -267,7 +273,9 @@ namespace PetStays_API.Repositories
                     PetId = Convert.ToInt32(r.PetId),
                     IsPaymentDone = Convert.ToBoolean(r.IsPaymentDone),
                     Status = Convert.ToString(r.Status),
-                    Remarks = Convert.ToString(r.Remarks)
+                    Remarks = Convert.ToString(r.Remarks),
+                    Address = u.Address,
+                    OwnerName = $"Name: {u.FullName},\n Phone: {u.Mobile}"
                 }).FirstOrDefault();
 
             return item;
@@ -284,6 +292,7 @@ namespace PetStays_API.Repositories
             _ctx.Requests.Update(res);
             _ctx.SaveChanges();
             var text = data.Status;
+#if !DEBUG
             MailRequest request = new MailRequest()
             {
                 MailTo = "petStays@yopmail.com", // User Mail
@@ -291,6 +300,7 @@ namespace PetStays_API.Repositories
                 Body = $"Hi! Your request has been {text} with remarks {data.Remarks}."
             };
             await _mailService.SendEmailAsync(request);
+#endif
             result.Status = true;
             result.Message = "Detail updated successfully";
             return result;
@@ -386,7 +396,7 @@ namespace PetStays_API.Repositories
                     AdminId = Convert.ToInt32(a.AdminId)
                 });
 
-            return item.ToList();
+            return item.ToList().Where(x => x.Date.Date > DateTime.Now.Date && x.Date.Date < DateTime.Now.AddDays(14)).ToList();
         }
     }
 }
