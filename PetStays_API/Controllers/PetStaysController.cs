@@ -153,6 +153,15 @@ namespace PetStays_API.Controllers
             return Ok(result);
         }
 
+        [HttpDelete]
+        [Route("[action]/{Id}")]
+        [ProducesResponseType(typeof(Result), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> DeleteAvailability(int Id)
+        {
+            var result = await _petStaysRepository.DeleteAvailability(Id);
+            return Ok(result);
+        }
+
         [HttpGet]
         [Route("[action]/{Id}")]
         [ProducesResponseType(typeof(UserDetail), (int)HttpStatusCode.OK)]

@@ -421,5 +421,17 @@ namespace PetStays_API.Repositories
             };
             return userDetail;
         }
+
+        public async Task<Result> DeleteAvailability(int id)
+        {
+            Availability availability = await _ctx.Availabilities.Where(x => x.Id == id).FirstOrDefaultAsync();
+            if(availability == null) throw new NotFoundException(ErrorMessages.IdNotFound);
+            _ctx.Availabilities.Remove(availability);
+            _ctx.SaveChanges();
+            Result result = new Result();
+            result.Status = true;
+            result.Message = "Availability deleted successfully";
+            return result;
+        }
     }
 }
