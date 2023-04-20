@@ -423,6 +423,21 @@ namespace PetStays_API.Repositories
             return item.ToList().Where(x => Convert.ToDateTime(x.Date) > DateTime.Now.Date && Convert.ToDateTime(x.Date) < DateTime.Now.AddDays(14)).ToList();
         }
 
+        public async Task<List<AvailabilityDetail>> GetAdminAvailability()
+        {
+            var item = (
+                from a in _ctx.Availabilities
+                select new AvailabilityDetail
+                {
+                    Date = a.Date.ToString(),
+                    TimeStart = a.TimeStart.ToString(),
+                    TimeEnd = a.TimeEnd.ToString(),
+                    FullDay = Convert.ToBoolean(a.FullDay)
+                });
+
+            return item.ToList().Where(x => Convert.ToDateTime(x.Date) > DateTime.Now.Date && Convert.ToDateTime(x.Date) < DateTime.Now.AddDays(14)).ToList();
+        }
+
         public async Task<UserDetail> GetUserById(int id)
         {
             User user = await _ctx.Users.Where(x => x.Id ==id).FirstOrDefaultAsync();

@@ -20,6 +20,7 @@
 
         public string Details { get; set; }
 
+        public IFormFile PhotoFile { get; set; }
         public string Photo { get; set; }
 
         public string DateFrom { get; set; }

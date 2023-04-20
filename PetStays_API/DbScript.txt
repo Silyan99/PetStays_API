@@ -93,7 +93,7 @@ time_from time,
 time_to time,
 pet_id int FOREIGN KEY REFERENCES pets(id) ON DELETE CASCADE,
 is_payment_done bit,
-status string,
+status varchar(30),
 remarks varchar(500),
 created_date datetime DEFAULT(GETUTCDATE())
 );

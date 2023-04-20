@@ -19,6 +19,7 @@ namespace PetStays_API.Interfaces
         Task<Result> AddRequest(PetDetail details, ClaimsIdentity identity);
         Task<Result> AddAvailability(AvailabilityDetail details);
         Task<List<AvailabilityDetail>> GetAvailability(int id);
+        Task<List<AvailabilityDetail>> GetAdminAvailability();
         Task<Result> DeleteAvailability(int id);
         Task<UserDetail> GetUserById(int id);
     }
