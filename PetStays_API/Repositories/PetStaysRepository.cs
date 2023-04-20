@@ -208,7 +208,15 @@ namespace PetStays_API.Repositories
         public async Task<Result> AddAvailability(AvailabilityDetail data)
         {
             Result result = new Result();
-            if(!data.TimeStart.IsNullOrEmpty() && !data.TimeEnd.IsNullOrEmpty())
+            var dateAlreadyExists = _ctx.Availabilities.Any(x => x.Date == DateTime.Parse(data.Date));
+            if (dateAlreadyExists)
+            {
+                result.Status = false;
+                result.Message = $"Schedule for {data.Date} already exists.";
+                return result;
+            }
+            
+            if(!IsEmptyTime(data.TimeStart) && !IsEmptyTime(data.TimeEnd))
             {
                 data.FullDay = false;
             }
@@ -226,6 +234,11 @@ namespace PetStays_API.Repositories
             result.Status = true;
             result.Message = "Availability detail added successfully";
             return result;
+        }
+
+        private bool IsEmptyTime(string timespanString)
+        {
+            return timespanString.IsNullOrEmpty() || timespanString.Equals("00:00:00");
         }
 
         public async Task<List<RequestsVM>> GetAllRequest()
