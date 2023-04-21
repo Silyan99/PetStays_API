@@ -24,4 +24,7 @@
     <Folder Include="DbModels\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="PetStays_API.sln" />
+  </ItemGroup>
 </Project>

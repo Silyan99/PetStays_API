@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using PetStays_API.Interfaces;
 using PetStays_API.Models;
@@ -16,10 +17,12 @@ namespace PetStays_API.Controllers
     public class PetStaysController : ControllerBase
     {
         private readonly IPetStaysRepository _petStaysRepository;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public PetStaysController(IPetStaysRepository petStaysRepository, IMailService mailService)
+        public PetStaysController(IPetStaysRepository petStaysRepository, IMailService mailService, IWebHostEnvironment webHostEnvironment)
         {
             _petStaysRepository = petStaysRepository;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         [AllowAnonymous]
@@ -108,7 +111,7 @@ namespace PetStays_API.Controllers
 
             // combining GUID to create unique name before saving in wwwroot
             string uniqueFileName = Guid.NewGuid().ToString() + "_" + FileName;
-            var directory = System.AppDomain.CurrentDomain.BaseDirectory + "/images/";
+            var directory = Directory.GetCurrentDirectory() + "/Images/";
 
             if (!Directory.Exists(directory))
             {
@@ -117,7 +120,7 @@ namespace PetStays_API.Controllers
 
             // getting full path inside wwwroot/images
             var imagePath = Path.Combine(directory, uniqueFileName);
-            var filePath = Path.Combine("/images/", uniqueFileName);
+            var filePath = Path.Combine("/Images/", uniqueFileName);
 
             // copying file
             if (!System.IO.File.Exists(imagePath))
@@ -127,9 +130,7 @@ namespace PetStays_API.Controllers
                     details.PhotoFile.CopyTo(stream);
                 }
             }
-
             details.Photo = filePath;
-
             var result = await _petStaysRepository.AddRequest(details, identity);
             return Ok(result);
         }

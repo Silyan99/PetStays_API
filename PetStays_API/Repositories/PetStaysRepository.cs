@@ -131,7 +131,6 @@ namespace PetStays_API.Repositories
             if (user == null) throw new BadReqException(ErrorMessages.AdminNotFound);
             Result result = new Result();
             var id = Convert.ToInt32(identity.FindFirst("Id").Value);
-            var username = Convert.ToInt32(identity.FindFirst("Username").Value);
             var pet = new Pet()
             {
                 Category = data.Category,
