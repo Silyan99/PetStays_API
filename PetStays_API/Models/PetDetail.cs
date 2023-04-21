@@ -4,7 +4,6 @@ namespace PetStays_API.Models
 {
     public class PetDetail
     {
-        [JsonIgnore]
         public int Id { get; set; }
         public string Category { get; set; }
 
