@@ -78,33 +78,47 @@ namespace PetStays_API.Controllers
             var dateTo = Convert.ToDateTime(details.DateTo);
             var TimeStart = TimeSpan.Parse(details.TimeFrom);
             var TimeTo = TimeSpan.Parse(details.TimeTo);
+            var DefaultStart = new TimeSpan(10, 0, 0);
+            var DefaultEnd = new TimeSpan(15, 0, 0);
 
-            //foreach (var av in availabilities)
-            //{
-            //    if (!(Convert.ToDateTime(av.Date) <= dateFrom))
-            //    {
-            //        return Ok(new Result { Status = false, Message = "DateFrom slot not available." });
-            //    }
-            //    else if (Convert.ToDateTime(av.Date) <= dateFrom && !av.FullDay)
-            //    {
-            //        if (TimeSpan.Compare(TimeStart, TimeSpan.Parse(av.TimeStart)) == -1)
-            //        {
-            //            return Ok(new Result { Status = false, Message = "TimeStart slot not available." });
-            //        }
-            //    }
+            bool isValidDropTiming = true;
+            bool isValidPickupTiming = true;
+            if (availabilities.Count > 0)
+            {
+                var dropAvailability = availabilities.Where(x => DateTime.Parse(x.Date) == dateFrom).FirstOrDefault();
+                var pickAvailability = availabilities.Where(x => DateTime.Parse(x.Date) == dateTo).FirstOrDefault();
 
-            //    if (!(Convert.ToDateTime(av.Date) >= dateTo))
-            //    {
-            //        return Ok(new Result { Status = false, Message = "DateTo slot not available." });
-            //    }
-            //    else if (Convert.ToDateTime(av.Date) >= dateTo && !av.FullDay)
-            //    {
-            //        if (TimeSpan.Compare(TimeTo, TimeSpan.Parse(av.TimeEnd)) == 1)
-            //        {
-            //            return Ok(new Result { Status = false, Message = "TimeTo slot not available." });
-            //        }
-            //    }
-            //}
+                if (dropAvailability != null)
+                {
+                    isValidDropTiming = (!dropAvailability.FullDay) && TimeSpan.Parse(dropAvailability.TimeStart) <= TimeStart
+                        && TimeSpan.Parse(dropAvailability.TimeEnd) >= TimeStart;
+                }
+                else
+                {
+                    isValidDropTiming = TimeStart <= DefaultEnd && TimeStart >= DefaultStart;
+                }
+
+                if (pickAvailability != null)
+                {
+                    isValidPickupTiming = (!pickAvailability.FullDay) && TimeSpan.Parse(pickAvailability.TimeStart) <= TimeTo
+                       && TimeSpan.Parse(pickAvailability.TimeEnd) >= TimeTo;
+                }
+                else
+                {
+                    isValidDropTiming = TimeTo <= DefaultEnd && TimeTo >= DefaultStart;
+                }
+            }
+
+            if (!isValidDropTiming)
+            {
+                return Ok(new Result { Status = false, Message = "Date start is invalid." });
+            }
+
+            if (!isValidPickupTiming)
+            {
+                return Ok(new Result { Status = false, Message = "Date end is invalid." });
+            }
+            
 
             // getting file original name
             string FileName = details.PhotoFile.FileName;
@@ -181,12 +195,12 @@ namespace PetStays_API.Controllers
             return Ok(result);
         }
 
-        [HttpPut]
+        [HttpPost]
         [Route("[action]/{Id}")]
         [ProducesResponseType(typeof(Result), (int)HttpStatusCode.OK)]
-        public async Task<IActionResult> UpdatePetRequest(int Id, PetDetail data)
+        public async Task<IActionResult> UpdatePetRequest(int Id, [FromForm]PetDetail details)
         {
-            data.Id = Id;
+            details.Id = Id;
             //// getting file original name
             //string FileName = data.PhotoFile.FileName;
 
@@ -212,7 +226,55 @@ namespace PetStays_API.Controllers
             //    }
             //}
             //data.Photo = filePath;
-            var result = await _petStaysRepository.UpdatePetRequest(data);
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+
+            var availabilities = await _petStaysRepository.GetAdminAvailability();
+
+            var dateFrom = Convert.ToDateTime(details.DateFrom);
+            var dateTo = Convert.ToDateTime(details.DateTo);
+            var TimeStart = TimeSpan.Parse(details.TimeFrom);
+            var TimeTo = TimeSpan.Parse(details.TimeTo);
+            var DefaultStart = new TimeSpan(10, 0, 0);
+            var DefaultEnd = new TimeSpan(15, 0, 0);
+
+            bool isValidDropTiming = true;
+            bool isValidPickupTiming = true;
+            if (availabilities.Count > 0)
+            {
+                var dropAvailability = availabilities.Where(x => DateTime.Parse(x.Date) == dateFrom).FirstOrDefault();
+                var pickAvailability = availabilities.Where(x => DateTime.Parse(x.Date) == dateTo).FirstOrDefault();
+
+                if (dropAvailability != null)
+                {
+                    isValidDropTiming = (!dropAvailability.FullDay) && TimeSpan.Parse(dropAvailability.TimeStart) <= TimeStart
+                        && TimeSpan.Parse(dropAvailability.TimeEnd) >= TimeStart;
+                }
+                else
+                {
+                    isValidDropTiming = TimeStart <= DefaultEnd && TimeStart >= DefaultStart;
+                }
+
+                if (pickAvailability != null)
+                {
+                    isValidPickupTiming = (!pickAvailability.FullDay) && TimeSpan.Parse(pickAvailability.TimeStart) <= TimeTo
+                       && TimeSpan.Parse(pickAvailability.TimeEnd) >= TimeTo;
+                }
+                else
+                {
+                    isValidDropTiming = TimeTo <= DefaultEnd && TimeTo >= DefaultStart;
+                }
+            }
+
+            if (!isValidDropTiming)
+            {
+                return Ok(new Result { Status = false, Message = "Date start is invalid." });
+            }
+
+            if (!isValidPickupTiming)
+            {
+                return Ok(new Result { Status = false, Message = "Date end is invalid." });
+            }
+            var result = await _petStaysRepository.UpdatePetRequest(details);
             return Ok(result);
         }
 

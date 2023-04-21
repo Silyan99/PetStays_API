@@ -545,7 +545,8 @@ namespace PetStays_API.Repositories
                     TimeStart = a.TimeStart.ToString(),
                     TimeEnd = a.TimeEnd.ToString(),
                     FullDay = Convert.ToBoolean(a.FullDay),
-                    AdminId = Convert.ToInt32(a.AdminId)
+                    AdminId = Convert.ToInt32(a.AdminId),
+                    Id = a.Id
                 });
 
             return item.ToList().Where(x => Convert.ToDateTime(x.Date) > DateTime.Now.Date && Convert.ToDateTime(x.Date) < DateTime.Now.AddDays(14)).ToList();

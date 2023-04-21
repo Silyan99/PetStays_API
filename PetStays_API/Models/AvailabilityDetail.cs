@@ -14,7 +14,6 @@ namespace PetStays_API.Models
 
         public int AdminId { get; set; }
 
-        [JsonIgnore]
         public int Id { get; set; }
     }
 }
