@@ -245,5 +245,15 @@ namespace PetStays_API.Controllers
             var result = await _petStaysRepository.GetUserById(Id);
             return Ok(result);
         }
+
+        [HttpPut]
+        [Route("[action]/{Id}")]
+        [ProducesResponseType(typeof(Result), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> UpdateAvailability(int Id, AvailabilityDetail data)
+        {
+            data.Id = Id;
+            var result = await _petStaysRepository.UpdateAvailability(data);
+            return Ok(result);
+        }
     }
 }

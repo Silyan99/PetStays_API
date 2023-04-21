@@ -7,7 +7,6 @@ using PetStays_API.Helpers;
 using PetStays_API.Interfaces;
 using PetStays_API.Models;
 using PetStays_API.Utility;
-using System.Linq;
 using System.Security.Claims;
 
 namespace PetStays_API.Repositories
@@ -215,9 +214,13 @@ namespace PetStays_API.Repositories
                 return result;
             }
             
-            if(!IsEmptyTime(data.TimeStart) && !IsEmptyTime(data.TimeEnd))
+            if (!System.String.IsNullOrEmpty(data.TimeStart) && !System.String.IsNullOrEmpty(data.TimeEnd))
             {
                 data.FullDay = false;
+            }else if(System.String.IsNullOrEmpty(data.TimeStart) && System.String.IsNullOrEmpty(data.TimeEnd))
+            {
+                data.TimeStart = "00:00:00";
+                data.TimeEnd = "00:00:00";
             }
             var availability = new Availability()
             {
@@ -232,6 +235,40 @@ namespace PetStays_API.Repositories
             _ctx.SaveChanges();
             result.Status = true;
             result.Message = "Availability detail added successfully";
+            return result;
+        }
+
+        public async Task<Result> UpdateAvailability(AvailabilityDetail data)
+        {
+            Result result = new Result();
+            Availability availability = await _ctx.Availabilities.Where(x => x.Id == data.Id).FirstOrDefaultAsync();
+            if (availability == null) throw new NotFoundException(ErrorMessages.DataNotFound);
+            var dateAlreadyExists = _ctx.Availabilities.Any(x => x.Date == DateTime.Parse(data.Date));
+            if (dateAlreadyExists)
+            {
+                result.Status = false;
+                result.Message = $"Schedule for {data.Date} already exists.";
+                return result;
+            }
+
+            if (!System.String.IsNullOrEmpty(data.TimeStart) && !System.String.IsNullOrEmpty(data.TimeEnd))
+            {
+                data.FullDay = false;
+            }else if(System.String.IsNullOrEmpty(data.TimeStart) && System.String.IsNullOrEmpty(data.TimeEnd))
+            {
+                data.TimeStart = "00:00:00";
+                data.TimeEnd = "00:00:00";
+            }
+            availability.Date = Convert.ToDateTime(data.Date);
+            availability.TimeStart = TimeSpan.Parse(data.TimeStart);
+            availability.TimeEnd = TimeSpan.Parse(data.TimeEnd);
+            availability.FullDay = data.FullDay;
+            availability.AdminId = data.AdminId;
+            _ctx.Availabilities.Update(availability);
+
+            _ctx.SaveChanges();
+            result.Status = true;
+            result.Message = "Availability detail updated successfully";
             return result;
         }
 

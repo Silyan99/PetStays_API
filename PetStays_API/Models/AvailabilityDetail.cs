@@ -1,4 +1,6 @@
-﻿namespace PetStays_API.Models
+﻿using System.Text.Json.Serialization;
+
+namespace PetStays_API.Models
 {
     public class AvailabilityDetail
     {
@@ -12,6 +14,7 @@
 
         public int AdminId { get; set; }
 
+        [JsonIgnore]
         public int Id { get; set; }
     }
 }
