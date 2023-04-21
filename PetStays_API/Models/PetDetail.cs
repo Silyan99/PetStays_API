@@ -1,7 +1,11 @@
-﻿namespace PetStays_API.Models
+﻿using System.Text.Json.Serialization;
+
+namespace PetStays_API.Models
 {
     public class PetDetail
     {
+        [JsonIgnore]
+        public int Id { get; set; }
         public string Category { get; set; }
 
         public string Uid { get; set; }

@@ -181,6 +181,41 @@ namespace PetStays_API.Controllers
             return Ok(result);
         }
 
+        [HttpPut]
+        [Route("[action]/{Id}")]
+        [ProducesResponseType(typeof(Result), (int)HttpStatusCode.OK)]
+        public async Task<IActionResult> UpdatePetRequest(int Id, [FromForm] PetDetail data)
+        {
+            data.Id = Id;
+            // getting file original name
+            string FileName = data.PhotoFile.FileName;
+
+            // combining GUID to create unique name before saving in wwwroot
+            string uniqueFileName = Guid.NewGuid().ToString() + "_" + FileName;
+            var directory = Directory.GetCurrentDirectory() + "/Images/";
+
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
+            // getting full path inside wwwroot/images
+            var imagePath = Path.Combine(directory, uniqueFileName);
+            var filePath = Path.Combine("/Images/", uniqueFileName);
+
+            // copying file
+            if (!System.IO.File.Exists(imagePath))
+            {
+                using (var stream = new FileStream(imagePath, FileMode.Create))
+                {
+                    data.PhotoFile.CopyTo(stream);
+                }
+            }
+            data.Photo = filePath;
+            var result = await _petStaysRepository.UpdatePetRequest(data);
+            return Ok(result);
+        }
+
         [HttpGet]
         [Route("[action]")]
         [ProducesResponseType(typeof(List<RequestsVM>), (int)HttpStatusCode.OK)]

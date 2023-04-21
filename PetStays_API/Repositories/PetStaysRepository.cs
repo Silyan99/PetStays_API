@@ -8,6 +8,8 @@ using PetStays_API.Interfaces;
 using PetStays_API.Models;
 using PetStays_API.Utility;
 using System.Security.Claims;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Security.Principal;
 
 namespace PetStays_API.Repositories
 {
@@ -63,7 +65,7 @@ namespace PetStays_API.Repositories
 
         //    _ctx.Users.Add(user);
         //    _ctx.SaveChanges();
-            
+
         //    result.Status = true;
         //    result.Message = "Admin added successfully";
         //    return result;
@@ -181,6 +183,39 @@ namespace PetStays_API.Repositories
             return result;
         }
 
+        public async Task<Result> UpdatePetRequest(PetDetail data)
+        {
+            Pet pet = await _ctx.Pets.Where(x => x.Id == data.Id).FirstOrDefaultAsync();
+            if (pet == null) throw new NotFoundException(ErrorMessages.IdNotFound);
+            Request req = await _ctx.Requests.Where(x => x.PetId == pet.Id).FirstOrDefaultAsync();
+            if (req == null) throw new NotFoundException(ErrorMessages.IdNotFound);
+            Result result = new Result();
+            pet.Category = data.Category;
+            //pet.Uid = data.Uid;
+            pet.Name = data.Name;
+            pet.Age = data.Age;
+            pet.Gender = data.Gender;
+            pet.Vaccinated = data.Vaccinated;
+            pet.Color = data.Color;
+            pet.Breed = data.Breed;
+            pet.Details = data.Details;
+            pet.Photo = data.Photo;
+
+            _ctx.Pets.Update(pet);
+
+            req.DateFrom = Convert.ToDateTime(data.DateFrom);
+            req.DateTo = Convert.ToDateTime(data.DateTo);
+            req.TimeFrom = TimeSpan.Parse(data.TimeFrom);
+            req.TimeTo = TimeSpan.Parse(data.TimeTo);
+
+            _ctx.Requests.Update(req);
+
+            _ctx.SaveChanges();
+            result.Status = true;
+            result.Message = "Pet Request detail updated successfully";
+            return result;
+        }
+
         //public async Task<Result> AddRequest(RequestDetail data)
         //{
         //    Result result = new Result();
@@ -213,11 +248,12 @@ namespace PetStays_API.Repositories
                 result.Message = $"Schedule for {data.Date} already exists.";
                 return result;
             }
-            
+
             if (!System.String.IsNullOrEmpty(data.TimeStart) && !System.String.IsNullOrEmpty(data.TimeEnd))
             {
                 data.FullDay = false;
-            }else if(System.String.IsNullOrEmpty(data.TimeStart) && System.String.IsNullOrEmpty(data.TimeEnd))
+            }
+            else if (System.String.IsNullOrEmpty(data.TimeStart) && System.String.IsNullOrEmpty(data.TimeEnd))
             {
                 data.TimeStart = "00:00:00";
                 data.TimeEnd = "00:00:00";
@@ -254,7 +290,8 @@ namespace PetStays_API.Repositories
             if (!System.String.IsNullOrEmpty(data.TimeStart) && !System.String.IsNullOrEmpty(data.TimeEnd))
             {
                 data.FullDay = false;
-            }else if(System.String.IsNullOrEmpty(data.TimeStart) && System.String.IsNullOrEmpty(data.TimeEnd))
+            }
+            else if (System.String.IsNullOrEmpty(data.TimeStart) && System.String.IsNullOrEmpty(data.TimeEnd))
             {
                 data.TimeStart = "00:00:00";
                 data.TimeEnd = "00:00:00";
@@ -281,7 +318,7 @@ namespace PetStays_API.Repositories
         {
             var item = (
                 from p in _ctx.Pets
-                join r in _ctx.Requests on p.Id equals r.PetId 
+                join r in _ctx.Requests on p.Id equals r.PetId
                 join u in _ctx.Users on p.OwnerId equals u.Id
                 select new RequestsVM
                 {
@@ -351,7 +388,7 @@ namespace PetStays_API.Repositories
         {
             Result result = new Result();
             Request res = await _ctx.Requests.Where(x => x.PetId == data.Id).FirstOrDefaultAsync();
-            if(res == null) throw new NotFoundException(ErrorMessages.DataNotFound);
+            if (res == null) throw new NotFoundException(ErrorMessages.DataNotFound);
             res.Status = data.Status;
             res.Remarks = data.Remarks;
             res.IsPaymentDone = data.IsPaymentDone;
@@ -483,10 +520,11 @@ namespace PetStays_API.Repositories
                 }
                 else
                 {
-                    availableTimes.Add(new AvailabilityDetail() { 
+                    availableTimes.Add(new AvailabilityDetail()
+                    {
                         Date = day.Date.ToString("yyyy-MM-dd"),
-                        AdminId=id,
-                        TimeStart = new TimeSpan(10,0,0).ToString(),
+                        AdminId = id,
+                        TimeStart = new TimeSpan(10, 0, 0).ToString(),
                         TimeEnd = new TimeSpan(15, 0, 0).ToString(),
                         FullDay = false
                     });
@@ -530,7 +568,7 @@ namespace PetStays_API.Repositories
 
         public async Task<UserDetail> GetUserById(int id)
         {
-            User user = await _ctx.Users.Where(x => x.Id ==id).FirstOrDefaultAsync();
+            User user = await _ctx.Users.Where(x => x.Id == id).FirstOrDefaultAsync();
             UserDetail userDetail = new()
             {
                 Email = user.Email,
@@ -544,7 +582,7 @@ namespace PetStays_API.Repositories
         public async Task<Result> DeleteAvailability(int id)
         {
             Availability availability = await _ctx.Availabilities.Where(x => x.Id == id).FirstOrDefaultAsync();
-            if(availability == null) throw new NotFoundException(ErrorMessages.IdNotFound);
+            if (availability == null) throw new NotFoundException(ErrorMessages.IdNotFound);
             _ctx.Availabilities.Remove(availability);
             _ctx.SaveChanges();
             Result result = new Result();
