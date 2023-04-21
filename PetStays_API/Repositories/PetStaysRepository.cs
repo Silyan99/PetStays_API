@@ -419,6 +419,47 @@ namespace PetStays_API.Repositories
             return result;
         }
 
+        public async Task<List<AvailabilityDetail>> GetAvailabilityForCustomer(int id)
+        {
+            DateTime todayDate = DateTime.Now.Date;
+            DateTime twoWeeks = DateTime.Now.AddDays(14);
+            var item = (
+                from a in _ctx.Availabilities
+                where (a.AdminId == id && a.Date >= todayDate && a.Date <= twoWeeks)
+                select new AvailabilityDetail
+                {
+                    Date = a.Date.ToString(),
+                    TimeStart = a.TimeStart.ToString(),
+                    TimeEnd = a.TimeEnd.ToString(),
+                    FullDay = Convert.ToBoolean(a.FullDay),
+                    AdminId = Convert.ToInt32(a.AdminId),
+                    Id = a.Id
+                });
+            var dbList = item.ToList();
+            var availableTimes = new List<AvailabilityDetail>();
+            for (int i = 0; i < 14; i++)
+            {
+                var day = DateTime.Now.AddDays(i);
+                var exisitngDay = dbList.FirstOrDefault(x => Convert.ToDateTime(x?.Date) == day.Date);
+                if (exisitngDay != null)
+                {
+                    availableTimes.Add(exisitngDay);
+                }
+                else
+                {
+                    availableTimes.Add(new AvailabilityDetail() { 
+                        Date = day.Date.ToString("yyyy-MM-dd"),
+                        AdminId=id,
+                        TimeStart = new TimeSpan(10,0,0).ToString(),
+                        TimeEnd = new TimeSpan(15, 0, 0).ToString(),
+                        FullDay = false
+                    });
+                }
+            }
+
+            return availableTimes;
+        }
+
         public async Task<List<AvailabilityDetail>> GetAvailability(int id)
         {
             var item = (
