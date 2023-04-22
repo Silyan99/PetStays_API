@@ -132,6 +132,7 @@ namespace PetStays_API.Repositories
             if (user == null) throw new BadReqException(ErrorMessages.AdminNotFound);
             Result result = new Result();
             var id = Convert.ToInt32(identity.FindFirst("Id").Value);
+            var username = Convert.ToString(identity.FindFirst("Username").Value);
             var pet = new Pet()
             {
                 Category = data.Category,
@@ -165,18 +166,18 @@ namespace PetStays_API.Repositories
 
 
 
-#if !DEBUG
+//#if !DEBUG
 
             MailRequest request = new MailRequest()
             {
                 MailTo = user.Email, // Admin Mail
                 Subject = "New Request",
                 Body = $"Hi! You have recieved new request with details " +
-                $"\n Email: {username}" +
+                $"\n Email: {username} and" +
                 $"\n Pet name: {data.Name}"
             };
             await _mailService.SendEmailAsync(request);
-#endif
+//#endif
 
             result.Status = true;
             result.Message = "Request detail added successfully";
@@ -393,21 +394,22 @@ namespace PetStays_API.Repositories
             res.Remarks = data.Remarks;
             res.IsPaymentDone = data.IsPaymentDone;
             _ctx.Requests.Update(res);
-            _ctx.SaveChanges();
+            
             User user = await _ctx.Users.Where(x => x.Id == res.MadeBy).FirstOrDefaultAsync();
             if (user == null) throw new BadReqException(ErrorMessages.UserNotExist);
             Pet pet = await _ctx.Pets.Where(x => x.Id == res.PetId).FirstOrDefaultAsync();
             if (pet == null) throw new BadReqException(ErrorMessages.PetNotFound);
+            _ctx.SaveChanges();
             var text = data.Status;
-#if !DEBUG
+//#if !DEBUG
             MailRequest request = new MailRequest()
             {
                 MailTo = user.Email, // User Mail
                 Subject = $"Request Status for pet {pet.Name} ",
-                Body = $"Hi! Your request for pet {pet.Name} has been {text} with remarks {data.Remarks}."
+                Body = $"Hi! Your request for pet {pet.Name} has been {text} with remarks '{data.Remarks}'."
             };
             await _mailService.SendEmailAsync(request);
-#endif
+//#endif
 
             result.Status = true;
             result.Message = "Detail updated successfully";
