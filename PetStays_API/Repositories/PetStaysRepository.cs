@@ -406,7 +406,8 @@ namespace PetStays_API.Repositories
             {
                 MailTo = user.Email, // User Mail
                 Subject = $"Request Status for pet {pet.Name} ",
-                Body = $"Hi! Your request for pet {pet.Name} has been {text} with remarks '{data.Remarks}'."
+                Body = text.ToLower() == "approve" ? $"Hi! Your request for pet {pet.Name} has been approved at the scheduled time." 
+                : $"Hi! Your request for pet {pet.Name} has been {text} with remarks '{data.Remarks}'."
             };
             await _mailService.SendEmailAsync(request);
 //#endif
